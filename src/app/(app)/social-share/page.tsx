@@ -1,7 +1,7 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react'
-import { CldImage } from 'next-cloudinary';
 
+import React, {useState, useEffect, useRef} from 'react'
+import { CldImage } from 'next-cloudinary';
 
 const socialFormats = {
     "Instagram Square (1:1)": { width: 1080, height: 1080, aspectRatio: "1:1" },
@@ -13,72 +13,70 @@ const socialFormats = {
 
   type SocialFormat = keyof typeof socialFormats;
 
-
-export default function SocialShare() {
+  export default function SocialShare() {
     const [uploadedImage, setUploadedImage] = useState<string | null>(null);
     const [selectedFormat, setSelectedFormat] = useState<SocialFormat>("Instagram Square (1:1)");
-    const [isUploading, setIsUploading] = useState(false)
-    const [isTransforming, setIsTransforming] = useState(false)
+    const [isUploading, setIsUploading] = useState(false);
+    const [isTransforming, setIsTransforming] = useState(false);
     const imageRef = useRef<HTMLImageElement>(null);
 
+
     useEffect(() => {
-        if (uploadedImage) {
-          setIsTransforming(true)
+        if(uploadedImage){
+            setIsTransforming(true);
         }
     }, [selectedFormat, uploadedImage])
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
+    const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
         if(!file) return;
-
-        setIsUploading(true)
+        setIsUploading(true);
         const formData = new FormData();
-        formData.append('file', file);
+        formData.append("file", file);
 
         try {
-          const responce = await fetch("/api/image-upload",{
-                  method: "POST",
-                  body: formData
-          })
+            const response = await fetch("/api/image-upload", {
+                method: "POST",
+                body: formData
+            })
 
-          if(!responce.ok) throw new Error("Failed to upload image")
+            if(!response.ok) throw new Error("Failed to upload image");
 
-            const data = await responce.json();
-            setUploadedImage(data.publicId)
+            const data = await response.json();
+            setUploadedImage(data.publicId);
+
+
         } catch (error) {
-          console.log(error);
-          alert("Error uploading image")
-        }finally{
-          setIsUploading(false)
+            console.log(error)
+            alert("Failed to upload image");
+        } finally{
+            setIsUploading(false);
         }
+    };
 
-      };
+    const handleDownload = () => {
+        if(!imageRef.current) return;
 
-
-  const handleDownload = () => {
-    if (!imageRef.current) return;
-
-    fetch(imageRef.current.src)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const url = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `${selectedFormat.replace(/\s+/g, "_").toLowerCase()}.png`;
-        document.body.appendChild(link);
-        link.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(link);
-      })
-
-    
-  };
-
+        fetch(imageRef.current.src)
+        .then((response) => response.blob())
+        .then((blob) => {
+            const url = window.URL.createObjectURL(blob)
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${selectedFormat
+          .replace(/\s+/g, "_")
+          .toLowerCase()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(link);
+        })
+    }
 
 
-
-  return (
-    <div className="container mx-auto p-4 max-w-4xl">
+    return (
+        <div className="container mx-auto p-4 max-w-4xl">
           <h1 className="text-3xl font-bold mb-6 text-center">
             Social Media Image Creator
           </h1>
@@ -91,7 +89,7 @@ export default function SocialShare() {
                   <span className="label-text">Choose an image file</span>
                 </label>
                 <input
-                  title='file'
+                title='Choose a file'
                   type="file"
                   onChange={handleFileUpload}
                   className="file-input file-input-bordered file-input-primary w-full"
@@ -109,7 +107,7 @@ export default function SocialShare() {
                   <h2 className="card-title mb-4">Select Social Media Format</h2>
                   <div className="form-control">
                     <select
-                     title={selectedFormat}
+                    title='Select a formate'
                       className="select select-bordered w-full"
                       value={selectedFormat}
                       onChange={(e) =>
@@ -157,6 +155,5 @@ export default function SocialShare() {
             </div>
           </div>
         </div>
-  )
+      );
 }
-
