@@ -1,3 +1,4 @@
+
 "use client"
 
 import React, {useState, useEffect, useRef} from 'react'
@@ -70,7 +71,7 @@ const socialFormats = {
             link.click();
             document.body.removeChild(link);
             window.URL.revokeObjectURL(url);
-            document.body.removeChild(link);
+            
         })
     }
 
@@ -89,7 +90,7 @@ const socialFormats = {
                   <span className="label-text">Choose an image file</span>
                 </label>
                 <input
-                title='Choose a file'
+                  title='upload image'
                   type="file"
                   onChange={handleFileUpload}
                   className="file-input file-input-bordered file-input-primary w-full"
@@ -107,7 +108,7 @@ const socialFormats = {
                   <h2 className="card-title mb-4">Select Social Media Format</h2>
                   <div className="form-control">
                     <select
-                    title='Select a formate'
+                    title='select image'
                       className="select select-bordered w-full"
                       value={selectedFormat}
                       onChange={(e) =>
